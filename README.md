@@ -40,16 +40,6 @@ The system is designed to reduce missed deadlines and improve time management th
 
 ---
 
-## 🗂 Project Layout
-
-study-planner/
-│
-├── backend/        # REST API built with Django
-├── frontend/       # Angular client application
-└── README.md
-
----
-
 ## 🚀 Getting Started
 
 ### 1. Clone the repository
