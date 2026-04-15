@@ -1,6 +1,6 @@
-# 🎓 Study Planner Web App
+# 🎓 UniTrade Web App
 
-A modern web application designed to help students effectively plan, organize, and track their academic tasks and deadlines.
+A modern student marketplace web application designed to help university students buy, sell, and exchange items in a simple, safe, and organized way.
 
 ---
 
@@ -15,28 +15,29 @@ A modern web application designed to help students effectively plan, organize, a
 ## 🧰 Technologies Used
 
 * **Frontend:** Angular 17+
-* **Backend:** Django REST Framework <<Planned>>
-* **Database:** SQLite (Development), PostgreSQL <<Planned>>
-* **Authentication:** JWT (JSON Web Token) <<Planned>>
+* **Backend:** Django REST Framework (Planned)
+* **Database:** SQLite (Development), PostgreSQL (Planned)
+* **Authentication:** JWT (JSON Web Token) (Planned)
 
 ---
 
 ## 💡 Overview
 
-Study Planner is a productivity-focused platform that allows students to manage their study process in a structured and intuitive way.
+UniTrade is a student-focused marketplace platform that allows users to post, browse, and manage product listings within a university community.
 
-The system is designed to reduce missed deadlines and improve time management through a simple and clean interface.
+The system is designed to make student-to-student trading easier by providing a clean interface for creating listings, viewing item details, and managing personal posts.
 
 ---
 
 ## ⚙️ Core Functionality
 
-* 📌 Create, edit, and delete tasks
-* ⏰ Assign deadlines and monitor progress
-* 📚 Group tasks by subjects
-* ✅ Mark tasks as completed
-* 📅 Visualize tasks using a calendar view
-* 🔐 User authentication and personal task management
+* 🛍 Create, edit, and delete product listings
+* 📦 Add item title, description, category, and price
+* 👤 User authentication and personal account management
+* 📂 Browse listings by categories
+* 🔎 View detailed information about each product
+* ✅ Manage personal listings
+* 💬 Support future expansion for student services and communication
 
 ---
 
@@ -44,7 +45,7 @@ The system is designed to reduce missed deadlines and improve time management th
 
 ### 1. Clone the repository
 
-git clone https://github.com/OVERLORDEX/study-planner.git
+git clone https://github.com/OVERLORDEX/UniTrade
 
 ---
 
@@ -57,16 +58,20 @@ git clone https://github.com/OVERLORDEX/study-planner.git
 
 ## 🎯 Project Goal
 
-The main objective of this project is to provide students with a simple yet powerful tool for organizing their academic responsibilities and improving productivity.
+The main objective of this project is to provide students with a convenient and user-friendly platform for buying and selling goods within their university or dormitory community.
+
+UniTrade aims to simplify student trading and create a trusted campus marketplace that can later be expanded into a larger service platform.
 
 ---
 
 ## 📈 Future Improvements
 
-* Notifications for upcoming deadlines
+* In-app messaging between buyers and sellers
+* Product search and advanced filtering
+* Favorite listings
 * Mobile-friendly UI
-* Advanced filtering and search
-* Integration with university systems
+* Service section for student-to-student help
+* Expansion beyond dormitory/university use
 
 ---
 
