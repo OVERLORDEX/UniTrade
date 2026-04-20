@@ -7,17 +7,27 @@
 
     <div class="nav-center">
       <a routerLink="/listings" routerLinkActive="active-link">Listings</a>
-      <a routerLink="/favorites" routerLinkActive="active-link">Favorites</a>
-
       @if (authService.isAuthenticated()) {
         <a routerLink="/create-listing" routerLinkActive="active-link">Create Listing</a>
-        <a routerLink="/my-listings" routerLinkActive="active-link">My Listings</a>
       }
     </div>
 
     <div class="nav-right">
       @if (authService.isAuthenticated()) {
-        <button class="logout-btn" (click)="logout()">Logout</button>
+        <div class="dropdown-container">
+          <button class="dropdown-trigger" (click)="toggleDropdown()">
+            Profile ▼
+          </button>
+          @if (dropdownOpen) {
+            <div class="dropdown-menu">
+              <a routerLink="/my-listings" (click)="closeDropdown()" class="dropdown-item">Мои объявления</a>
+              <a routerLink="/favorites" (click)="closeDropdown()" class="dropdown-item">Избранное</a>
+              <a routerLink="/profile" (click)="closeDropdown()" class="dropdown-item">Настройки</a>
+              <div class="dropdown-divider"></div>
+              <button class="dropdown-item dropdown-logout" (click)="logout()">Выйти</button>
+            </div>
+          }
+        </div>
       } @else {
         <a routerLink="/login" class="login-link">Login</a>
         <a routerLink="/register" class="register-link">Register</a>

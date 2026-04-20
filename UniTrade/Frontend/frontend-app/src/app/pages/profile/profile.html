@@ -1,0 +1,79 @@
+<div class="profile-page">
+  <div class="page-header">
+    <div class="page-header-card">
+      <div class="header-badge">Personal Dashboard</div>
+      <h1>Profile Settings</h1>
+      <p>Manage your account details and contact information.</p>
+    </div>
+  </div>
+
+  <div class="page-container">
+    @if (isLoading) {
+      <div class="message-box loading-box">Loading profile...</div>
+    }
+
+    @if (errorMessage) {
+      <div class="message-box error-box">{{ errorMessage }}</div>
+    }
+
+    @if (successMessage) {
+      <div class="message-box success-box">{{ successMessage }}</div>
+    }
+
+    @if (!isLoading && profile) {
+      <div class="profile-card">
+        <div class="profile-form">
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" [value]="profile.user.username" disabled />
+          </div>
+
+          <div class="form-group">
+            <label>Email</label>
+            <input type="text" [value]="profile.user.email" disabled />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Phone Number (for WhatsApp)</label>
+              <input type="text" [(ngModel)]="editData.phone" placeholder="e.g. +77001234567" />
+            </div>
+
+            <div class="form-group">
+              <label>Telegram Username</label>
+              <input type="text" [(ngModel)]="editData.telegram_username" placeholder="without @" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Bio / About Me</label>
+            <textarea [(ngModel)]="editData.bio" rows="4" placeholder="Tell buyers a bit about yourself..."></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>University ID</label>
+              <input type="text" [(ngModel)]="editData.university_id" placeholder="Student ID" />
+            </div>
+            
+            <div class="form-group">
+              <label>Dormitory</label>
+              <input type="text" [(ngModel)]="editData.dormitory" placeholder="e.g. Block A" />
+            </div>
+
+            <div class="form-group">
+              <label>Room</label>
+              <input type="text" [(ngModel)]="editData.room" placeholder="e.g. 402" />
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="save-btn" [disabled]="isSaving" (click)="saveProfile()">
+              {{ isSaving ? 'Saving...' : 'Save Changes' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

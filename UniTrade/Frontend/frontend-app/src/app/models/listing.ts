@@ -18,4 +18,11 @@ export interface Listing {
   created_at: string;
   updated_at: string;
   favorites_count: number;
+  seller_contacts?: {
+    phone: string;
+    whatsapp_link: string;
+    telegram_username: string;
+    email: string;
+  };
+  is_favorited?: boolean;
 }

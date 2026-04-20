@@ -47,11 +47,35 @@
           </div>
 
           <div class="detail-actions">
-            <button class="favorite-btn" (click)="addToFavorites()">Add to Favorites</button>
+            <button class="favorite-btn" 
+                    [class.active]="listing.is_favorited" 
+                    (click)="addToFavorites()">
+              {{ listing.is_favorited ? 'Remove from Favorites' : 'Add to Favorites' }}
+            </button>
+            <button class="contact-btn" (click)="openContactModal()">Contact Seller</button>
             <a routerLink="/listings" class="back-btn">Back to Listings</a>
           </div>
         </div>
       </div>
+
+      @if (isContactModalOpen && listing.seller_contacts) {
+        <div class="modal-overlay" (click)="closeContactModal()">
+          <div class="modal-content" (click)="$event.stopPropagation()">
+            <button class="close-modal-btn" (click)="closeContactModal()">×</button>
+            <h2>Contact Seller</h2>
+            <div class="contact-info">
+              <p><strong>Phone:</strong> {{ listing.seller_contacts.phone || 'Not provided' }}</p>
+              @if (listing.seller_contacts.whatsapp_link) {
+                <a [href]="listing.seller_contacts.whatsapp_link" target="_blank" class="contact-link whatsapp">Message on WhatsApp</a>
+              }
+              @if (listing.seller_contacts.telegram_username) {
+                <a [href]="'https://t.me/' + listing.seller_contacts.telegram_username" target="_blank" class="contact-link telegram">Message on Telegram</a>
+              }
+              <p><strong>Email:</strong> <a [href]="'mailto:' + listing.seller_contacts.email">{{ listing.seller_contacts.email }}</a></p>
+            </div>
+          </div>
+        </div>
+      }
 
       <div class="comments-card">
         <h2>Comments</h2>

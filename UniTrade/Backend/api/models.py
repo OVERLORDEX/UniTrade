@@ -16,6 +16,10 @@ class Profile(models.Model):
     dormitory = models.CharField(max_length=100, blank=True)
     room = models.CharField(max_length=20, blank=True)
     avatar_url = models.URLField(blank=True)
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    bio = models.TextField(blank=True)
+    telegram_username = models.CharField(max_length=100, blank=True)
+    university_id = models.CharField(max_length=50, blank=True)
 
     def __str__(self):
         return f"{self.user.username} Profile"

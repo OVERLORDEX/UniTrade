@@ -17,6 +17,7 @@ export class ListingDetailComponent implements OnInit {
   commentText = '';
   errorMessage = '';
   isLoading = false;
+  isContactModalOpen = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -61,14 +62,37 @@ export class ListingDetailComponent implements OnInit {
   addToFavorites(): void {
     if (!this.listing) return;
 
-    this.listingService.addToFavorites(this.listing.id).subscribe({
-      next: () => {
-        alert('Added to favorites');
-      },
-      error: () => {
-        alert('You need to log in first');
-      }
-    });
+    if (this.listing.is_favorited) {
+      this.listingService.removeFromFavorites(this.listing.id).subscribe({
+        next: () => {
+          if (this.listing) this.listing.is_favorited = false;
+        },
+        error: () => {
+          alert('Failed to remove from favorites');
+        }
+      });
+    } else {
+      this.listingService.addToFavorites(this.listing.id).subscribe({
+        next: () => {
+          if (this.listing) this.listing.is_favorited = true;
+        },
+        error: () => {
+          alert('You need to log in first');
+        }
+      });
+    }
+  }
+
+  openContactModal(): void {
+    if (!this.listing?.seller_contacts) {
+      alert("Seller contacts are not available.");
+      return;
+    }
+    this.isContactModalOpen = true;
+  }
+
+  closeContactModal(): void {
+    this.isContactModalOpen = false;
   }
 
   addComment(): void {

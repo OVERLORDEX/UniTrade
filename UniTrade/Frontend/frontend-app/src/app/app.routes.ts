@@ -8,6 +8,7 @@ import { CreateListingComponent } from './pages/create-listing/create-listing';
 import { EditListingComponent } from './pages/edit-listing/edit-listing';
 import { MyListingsComponent } from './pages/my-listings/my-listings';
 import { FavoritesComponent } from './pages/favorites/favorites';
+import { ProfileComponent } from './pages/profile/profile';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -19,4 +20,5 @@ export const routes: Routes = [
   { path: 'edit-listing/:id', component: EditListingComponent },
   { path: 'my-listings', component: MyListingsComponent },
   { path: 'favorites', component: FavoritesComponent },
+  { path: 'profile', component: ProfileComponent },
 ];

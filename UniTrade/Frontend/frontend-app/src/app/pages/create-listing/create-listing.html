@@ -92,9 +92,9 @@
 
         <div class="input-group full">
           <select [(ngModel)]="category_id" (blur)="validateCategory()">
-            <option [ngValue]="null">Select category</option>
+            <option value="" disabled>Select category</option>
             @for (category of categories; track category.id) {
-              <option [ngValue]="category.id">{{ category.name }}</option>
+              <option [value]="category.id">{{ category.name }}</option>
             }
           </select>
           @if (categoryError) {

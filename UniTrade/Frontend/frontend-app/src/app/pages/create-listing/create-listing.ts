@@ -17,7 +17,7 @@ export class CreateListingComponent implements OnInit {
   price: number | null = null;
   condition = 'used';
   status = 'available';
-  category_id: number | null = null;
+  category_id: any = '';
   location = '';
 
   selectedImage: File | null = null;

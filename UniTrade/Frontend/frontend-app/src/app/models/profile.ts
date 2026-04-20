@@ -7,4 +7,8 @@ export interface Profile {
   dormitory: string;
   room: string;
   avatar_url: string;
+  avatar?: string;
+  bio: string;
+  telegram_username: string;
+  university_id: string;
 }

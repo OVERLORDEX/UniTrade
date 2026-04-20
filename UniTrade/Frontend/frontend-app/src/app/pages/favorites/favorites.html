@@ -26,22 +26,22 @@
 
     @if (!isLoading && favorites.length > 0) {
       <div class="favorites-grid">
-        @for (favorite of favorites; track favorite.id) {
+        @for (listing of favorites; track listing.id) {
           <div class="favorite-card">
             <div class="image-wrapper">
-              <img [src]="getImageUrl(favorite)" [alt]="favorite.listing.title" />
-              <span class="status-badge">{{ favorite.listing.status }}</span>
+              <img [src]="getImageUrl(listing)" [alt]="listing.title" />
+              <span class="status-badge">{{ listing.status }}</span>
             </div>
 
             <div class="card-body">
-              <h3>{{ favorite.listing.title }}</h3>
-              <p class="price">{{ favorite.listing.price }} ₸</p>
-              <p class="category">{{ favorite.listing.category.name }}</p>
-              <p class="location">{{ favorite.listing.location || 'Campus location not specified' }}</p>
+              <h3>{{ listing.title }}</h3>
+              <p class="price">{{ listing.price }} ₸</p>
+              <p class="category">{{ listing.category.name }}</p>
+              <p class="location">{{ listing.location || 'Campus location not specified' }}</p>
 
               <div class="card-actions">
-                <a [routerLink]="['/listings', favorite.listing.id]" class="view-btn">View</a>
-                <button class="remove-btn" (click)="removeFavorite(favorite.listing.id)">
+                <a [routerLink]="['/listings', listing.id]" class="view-btn">View</a>
+                <button class="remove-btn" (click)="removeFavorite(listing.id)">
                   Remove
                 </button>
               </div>

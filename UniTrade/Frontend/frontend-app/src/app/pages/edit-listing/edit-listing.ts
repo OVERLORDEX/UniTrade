@@ -19,7 +19,7 @@ export class EditListingComponent implements OnInit {
   price: number | null = null;
   condition = 'used';
   status = 'available';
-  category_id: number | null = null;
+  category_id: any = '';
   location = '';
 
   categories: Category[] = [];
@@ -40,7 +40,7 @@ export class EditListingComponent implements OnInit {
     private route: ActivatedRoute,
     private listingService: ListingService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.id = Number(this.route.snapshot.paramMap.get('id'));
@@ -69,7 +69,7 @@ export class EditListingComponent implements OnInit {
         this.price = listing.price;
         this.condition = listing.condition;
         this.status = listing.status;
-        this.category_id = listing.category?.id;
+        this.category_id = listing.category?.id ? String(listing.category.id) : '';
         this.location = listing.location || '';
 
         if (listing.image) {

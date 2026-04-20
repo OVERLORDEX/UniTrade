@@ -181,13 +181,22 @@ class ProfileAPIView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def patch(self, request):
+        profile = request.user.profile
+        serializer = ProfileSerializer(profile, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class FavoriteListCreateAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         favorites = Favorite.objects.filter(user=request.user).order_by('-created_at')
-        serializer = FavoriteSerializer(favorites, many=True, context={'request': request})
+        listings = [favorite.listing for favorite in favorites]
+        serializer = ListingSerializer(listings, many=True, context={'request': request})
         return Response(serializer.data)
 
     def post(self, request):

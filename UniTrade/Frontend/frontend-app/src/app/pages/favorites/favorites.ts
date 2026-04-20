@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ListingService } from '../../services/listing';
-import { Favorite } from '../../models/favorite';
+import { Listing } from '../../models/listing';
 
 @Component({
   selector: 'app-favorites',
@@ -11,7 +11,7 @@ import { Favorite } from '../../models/favorite';
   styleUrl: './favorites.css'
 })
 export class FavoritesComponent implements OnInit {
-  favorites: Favorite[] = [];
+  favorites: Listing[] = [];
   errorMessage = '';
   isLoading = false;
 
@@ -48,12 +48,12 @@ export class FavoritesComponent implements OnInit {
     });
   }
 
-  getImageUrl(favorite: any): string {
-    if (favorite.listing?.image) {
-      if (favorite.listing.image.startsWith('http')) {
-        return favorite.listing.image;
+  getImageUrl(listing: any): string {
+    if (listing.image) {
+      if (listing.image.startsWith('http')) {
+        return listing.image;
       }
-      return `http://127.0.0.1:8000${favorite.listing.image}`;
+      return `http://127.0.0.1:8000${listing.image}`;
     }
     return 'https://via.placeholder.com/400x280?text=UniTrade';
   }

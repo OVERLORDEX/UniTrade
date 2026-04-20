@@ -53,8 +53,8 @@ export class ListingService {
     return this.http.get<Listing[]>(`${this.apiUrl}/my-listings/`);
   }
 
-  getFavorites(): Observable<Favorite[]> {
-    return this.http.get<Favorite[]>(`${this.apiUrl}/favorites/`);
+  getFavorites(): Observable<Listing[]> {
+    return this.http.get<Listing[]>(`${this.apiUrl}/favorites/`);
   }
 
   addToFavorites(listing_id: number): Observable<any> {
@@ -66,11 +66,11 @@ export class ListingService {
   }
 
   getProfile(): Observable<Profile> {
-    return this.http.get<Profile>(`${this.apiUrl}/profile/`);
+    return this.http.get<Profile>(`${this.apiUrl}/profile/me/`);
   }
 
   updateProfile(data: any): Observable<Profile> {
-    return this.http.put<Profile>(`${this.apiUrl}/profile/`, data);
+    return this.http.patch<Profile>(`${this.apiUrl}/profile/me/`, data);
   }
 
   getComments(listingId: number): Observable<any[]> {

@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { ListingService } from '../../services/listing';
 import { Listing } from '../../models/listing';
 import { Category } from '../../models/category';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-listings',
@@ -21,13 +22,21 @@ export class ListingsComponent implements OnInit {
   ordering = '';
 
   errorMessage = '';
-  isLoading = false;
+  isLoading = true;
 
-  constructor(private listingService: ListingService) {}
+  constructor(
+    private listingService: ListingService,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
-    this.loadCategories();
-    this.loadListings();
+    this.route.queryParams.subscribe(params => {
+      if (params['category']) {
+        this.selectedCategory = params['category'];
+      }
+      this.loadCategories();
+      this.loadListings();
+    });
   }
 
   loadCategories(): void {
@@ -80,5 +89,30 @@ export class ListingsComponent implements OnInit {
       return `http://127.0.0.1:8000${listing.image}`;
     }
     return 'https://via.placeholder.com/400x280?text=UniTrade';
+  }
+
+  toggleFavorite(listing: Listing, event: Event): void {
+    event.stopPropagation();
+    event.preventDefault();
+
+    if (listing.is_favorited) {
+      this.listingService.removeFromFavorites(listing.id).subscribe({
+        next: () => {
+          listing.is_favorited = false;
+        },
+        error: () => {
+          alert('Failed to remove from favorites. Please log in.');
+        }
+      });
+    } else {
+      this.listingService.addToFavorites(listing.id).subscribe({
+        next: () => {
+          listing.is_favorited = true;
+        },
+        error: () => {
+          alert('You need to log in to add to favorites');
+        }
+      });
+    }
   }
 }

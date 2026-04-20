@@ -25,6 +25,7 @@ urlpatterns = [
     path('my-listings/', MyListingsAPIView.as_view()),
 
     path('profile/', ProfileAPIView.as_view()),
+    path('profile/me/', ProfileAPIView.as_view()),
 
     path('favorites/', FavoriteListCreateAPIView.as_view()),
     path('favorites/<int:listing_id>/', FavoriteDeleteAPIView.as_view()),
