@@ -11,7 +11,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req);
   }
 
-  const token = localStorage.getItem('access');
+  let token = null;
+  if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
+    token = localStorage.getItem('access');
+  }
 
   if (token) {
     req = req.clone({

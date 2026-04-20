@@ -13,7 +13,7 @@ import { Listing } from '../../models/listing';
 export class MyListingsComponent implements OnInit {
   listings: Listing[] = [];
   errorMessage = '';
-  isLoading = false;
+  isLoading = true;
 
   constructor(private listingService: ListingService) {}
 

@@ -12,7 +12,7 @@ import { Profile } from '../../models/profile';
 })
 export class ProfileComponent implements OnInit {
   profile: Profile | null = null;
-  isLoading = false;
+  isLoading = true;
   isSaving = false;
   errorMessage = '';
   successMessage = '';

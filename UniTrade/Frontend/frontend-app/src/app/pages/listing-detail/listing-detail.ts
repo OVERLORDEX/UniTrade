@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ListingService } from '../../services/listing';
@@ -16,12 +16,13 @@ export class ListingDetailComponent implements OnInit {
   comments: any[] = [];
   commentText = '';
   errorMessage = '';
-  isLoading = false;
+  isLoading = true;
   isContactModalOpen = false;
 
   constructor(
     private route: ActivatedRoute,
-    private listingService: ListingService
+    private listingService: ListingService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -39,11 +40,13 @@ export class ListingDetailComponent implements OnInit {
         console.log('DETAIL DATA:', data);
         this.listing = data;
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.log('DETAIL ERROR:', error);
         this.errorMessage = 'Failed to load listing';
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -52,6 +55,7 @@ export class ListingDetailComponent implements OnInit {
     this.listingService.getComments(id).subscribe({
       next: (data) => {
         this.comments = data;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.log('COMMENTS ERROR:', error);

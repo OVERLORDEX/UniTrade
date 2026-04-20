@@ -33,7 +33,7 @@ export class EditListingComponent implements OnInit {
   priceError = '';
   categoryError = '';
   errorMessage = '';
-  isLoading = false;
+  isLoading = true;
   isPageLoading = false;
 
   constructor(

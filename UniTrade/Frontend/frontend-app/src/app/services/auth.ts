@@ -25,21 +25,28 @@ export class AuthService {
   }
 
   logout(): Observable<any> {
-    const refresh = localStorage.getItem('refresh');
+    const refresh = typeof window !== 'undefined' ? localStorage.getItem('refresh') : null;
     return this.http.post(`${this.apiUrl}/logout/`, { refresh });
   }
 
   saveTokens(access: string, refresh: string): void {
-    localStorage.setItem('access', access);
-    localStorage.setItem('refresh', refresh);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('access', access);
+      localStorage.setItem('refresh', refresh);
+    }
   }
 
   clearTokens(): void {
-    localStorage.removeItem('access');
-    localStorage.removeItem('refresh');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('access');
+      localStorage.removeItem('refresh');
+    }
   }
 
   isAuthenticated(): boolean {
-    return !!localStorage.getItem('access');
+    if (typeof window !== 'undefined') {
+      return !!localStorage.getItem('access');
+    }
+    return false;
   }
 }

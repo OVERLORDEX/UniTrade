@@ -13,7 +13,7 @@ import { Listing } from '../../models/listing';
 export class FavoritesComponent implements OnInit {
   favorites: Listing[] = [];
   errorMessage = '';
-  isLoading = false;
+  isLoading = true;
 
   constructor(private listingService: ListingService) {}
 
