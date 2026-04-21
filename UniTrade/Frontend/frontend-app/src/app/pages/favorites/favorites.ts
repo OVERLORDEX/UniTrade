@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ListingService } from '../../services/listing';
 import { Favorite } from '../../models/favorite';
@@ -6,16 +7,19 @@ import { Favorite } from '../../models/favorite';
 @Component({
   selector: 'app-favorites',
   standalone: true,
-  imports: [RouterLink],
+  imports: [CommonModule, RouterLink],
   templateUrl: './favorites.html',
   styleUrl: './favorites.css'
 })
 export class FavoritesComponent implements OnInit {
   favorites: Favorite[] = [];
   errorMessage = '';
-  isLoading = false;
+  isLoading = true;
 
-  constructor(private listingService: ListingService) {}
+  constructor(
+    private listingService: ListingService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.loadFavorites();
@@ -27,12 +31,16 @@ export class FavoritesComponent implements OnInit {
 
     this.listingService.getFavorites().subscribe({
       next: (data) => {
-        this.favorites = data;
+        console.log('FAVORITES DATA:', data);
+        this.favorites = data || [];
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
-      error: () => {
+      error: (error) => {
+        console.log('FAVORITES ERROR:', error);
         this.errorMessage = 'Failed to load favorites';
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -42,14 +50,16 @@ export class FavoritesComponent implements OnInit {
       next: () => {
         this.loadFavorites();
       },
-      error: () => {
+      error: (error) => {
+        console.log('REMOVE FAVORITE ERROR:', error);
         this.errorMessage = 'Failed to remove favorite';
+        this.cdr.detectChanges();
       }
     });
   }
 
   getImageUrl(favorite: any): string {
-    if (favorite.listing?.image) {
+    if (favorite?.listing?.image) {
       if (favorite.listing.image.startsWith('http')) {
         return favorite.listing.image;
       }

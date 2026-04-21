@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -13,8 +14,13 @@ interface AuthResponse {
 })
 export class AuthService {
   private apiUrl = 'http://127.0.0.1:8000/api';
+  private platformId = inject(PLATFORM_ID);
 
   constructor(private http: HttpClient) {}
+
+  private isBrowser(): boolean {
+    return isPlatformBrowser(this.platformId);
+  }
 
   register(data: { username: string; email: string; password: string }): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/register/`, data);
@@ -25,21 +31,34 @@ export class AuthService {
   }
 
   logout(): Observable<any> {
-    const refresh = localStorage.getItem('refresh');
+    const refresh = this.isBrowser() ? sessionStorage.getItem('refresh') : null;
     return this.http.post(`${this.apiUrl}/logout/`, { refresh });
   }
 
   saveTokens(access: string, refresh: string): void {
-    localStorage.setItem('access', access);
-    localStorage.setItem('refresh', refresh);
+    if (!this.isBrowser()) return;
+    sessionStorage.setItem('access', access);
+    sessionStorage.setItem('refresh', refresh);
   }
 
   clearTokens(): void {
-    localStorage.removeItem('access');
-    localStorage.removeItem('refresh');
+    if (!this.isBrowser()) return;
+    sessionStorage.removeItem('access');
+    sessionStorage.removeItem('refresh');
+  }
+
+  getAccessToken(): string | null {
+    if (!this.isBrowser()) return null;
+    return sessionStorage.getItem('access');
+  }
+
+  getRefreshToken(): string | null {
+    if (!this.isBrowser()) return null;
+    return sessionStorage.getItem('refresh');
   }
 
   isAuthenticated(): boolean {
-    return !!localStorage.getItem('access');
+    if (!this.isBrowser()) return false;
+    return !!sessionStorage.getItem('access');
   }
 }

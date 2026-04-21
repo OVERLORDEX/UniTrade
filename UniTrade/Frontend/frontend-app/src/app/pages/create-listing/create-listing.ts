@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ListingService } from '../../services/listing';
@@ -7,7 +8,7 @@ import { Category } from '../../models/category';
 @Component({
   selector: 'app-create-listing',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './create-listing.html',
   styleUrl: './create-listing.css'
 })
@@ -17,7 +18,7 @@ export class CreateListingComponent implements OnInit {
   price: number | null = null;
   condition = 'used';
   status = 'available';
-  category_id: number | null = null;
+  category_id = '';
   location = '';
 
   selectedImage: File | null = null;
@@ -32,18 +33,46 @@ export class CreateListingComponent implements OnInit {
   errorMessage = '';
   isLoading = false;
 
+  phone = '';
+  telegram = '';
+  whatsapp = '';
+  contact_email = '';
+  dormitory = '';
+  room = '';
+
   constructor(
     private listingService: ListingService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    this.loadCategories();
+    this.loadProfile();
+  }
+
+  loadCategories(): void {
     this.listingService.getCategories().subscribe({
       next: (data) => {
-        this.categories = data;
+        this.categories = data || [];
       },
       error: () => {
         this.errorMessage = 'Failed to load categories';
+      }
+    });
+  }
+
+  loadProfile(): void {
+    this.listingService.getProfile().subscribe({
+      next: (profile: any) => {
+        this.phone = profile.phone || '';
+        this.telegram = profile.telegram || '';
+        this.whatsapp = profile.whatsapp || '';
+        this.contact_email = profile.contact_email || '';
+        this.dormitory = profile.dormitory || '';
+        this.room = profile.room || '';
+      },
+      error: (error) => {
+        console.log('PROFILE LOAD ERROR:', error);
       }
     });
   }
@@ -118,13 +147,35 @@ export class CreateListingComponent implements OnInit {
 
     this.isLoading = true;
 
+    const profileData = {
+      phone: this.phone,
+      telegram: this.telegram,
+      whatsapp: this.whatsapp,
+      contact_email: this.contact_email,
+      dormitory: this.dormitory,
+      room: this.room
+    };
+
+    this.listingService.updateProfile(profileData).subscribe({
+      next: () => {
+        this.createListingRequest();
+      },
+      error: (error) => {
+        console.log('PROFILE UPDATE ERROR:', error);
+        this.errorMessage = 'Failed to save contact information';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  createListingRequest(): void {
     const formData = new FormData();
     formData.append('title', this.title.trim());
     formData.append('description', this.description.trim());
     formData.append('price', String(this.price));
     formData.append('condition', this.condition);
     formData.append('status', this.status);
-    formData.append('category_id', String(this.category_id));
+    formData.append('category_id', this.category_id);
     formData.append('location', this.location.trim());
     formData.append('is_active', 'true');
 
@@ -138,6 +189,7 @@ export class CreateListingComponent implements OnInit {
         this.router.navigate(['/my-listings']);
       },
       error: (error) => {
+        console.log('CREATE LISTING ERROR:', error);
         this.isLoading = false;
         if (error.error?.error) {
           this.errorMessage = error.error.error;

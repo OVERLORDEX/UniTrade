@@ -1,0 +1,38 @@
+<div class="profile-page">
+  <div class="profile-card">
+    <h1>My Profile</h1>
+
+    <div class="avatar-section">
+      <input type="file" accept="image/*" (change)="onAvatarSelected($event)" />
+      <div *ngIf="avatarPreview" class="avatar-preview">
+        <img [src]="avatarPreview" alt="Avatar" />
+      </div>
+    </div>
+
+    <div class="profile-grid">
+      <input type="text" placeholder="First name" [(ngModel)]="first_name" />
+      <input type="text" placeholder="Last name" [(ngModel)]="last_name" />
+      <input type="number" placeholder="Birth year" [(ngModel)]="birth_year" />
+      <input type="text" placeholder="Phone" [(ngModel)]="phone" />
+      <input type="text" placeholder="Telegram" [(ngModel)]="telegram" />
+      <input type="text" placeholder="WhatsApp" [(ngModel)]="whatsapp" />
+      <input type="email" placeholder="Email" [(ngModel)]="contact_email" />
+      <input type="text" placeholder="Dormitory" [(ngModel)]="dormitory" />
+      <input type="text" placeholder="Room" [(ngModel)]="room" />
+    </div>
+
+    <button (click)="saveProfile()" [disabled]="isLoading">
+      {{ isLoading ? 'Saving...' : 'Save Profile' }}
+    </button>
+
+    <div class="password-box">
+      <h2>Change Password</h2>
+      <input type="password" placeholder="Old password" [(ngModel)]="old_password" />
+      <input type="password" placeholder="New password" [(ngModel)]="new_password" />
+      <button (click)="changePassword()">Change Password</button>
+    </div>
+
+    <p *ngIf="message" class="success">{{ message }}</p>
+    <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+  </div>
+</div>

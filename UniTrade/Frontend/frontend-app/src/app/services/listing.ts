@@ -33,6 +33,10 @@ export class ListingService {
     return this.http.get<Listing[]>(url);
   }
 
+  rateListing(listingId: number, score: number) {
+    return this.http.post(`${this.apiUrl}/listings/${listingId}/rate/`, { score });
+  }
+
   getListingById(id: number): Observable<Listing> {
     return this.http.get<Listing>(`${this.apiUrl}/listings/${id}/`);
   }
@@ -71,6 +75,10 @@ export class ListingService {
 
   updateProfile(data: any): Observable<Profile> {
     return this.http.put<Profile>(`${this.apiUrl}/profile/`, data);
+  }
+
+  changePassword(data: { old_password: string; new_password: string }) {
+  return this.http.post(`${this.apiUrl}/change-password/`, data);
   }
 
   getComments(listingId: number): Observable<any[]> {

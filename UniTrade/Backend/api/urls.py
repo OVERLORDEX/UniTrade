@@ -11,6 +11,8 @@ from .views import (
     FavoriteListCreateAPIView,
     FavoriteDeleteAPIView,
     CommentListCreateAPIView,
+    RatingCreateAPIView,
+    ChangePasswordAPIView
 )
 
 urlpatterns = [
@@ -30,4 +32,6 @@ urlpatterns = [
     path('favorites/<int:listing_id>/', FavoriteDeleteAPIView.as_view()),
 
     path('listings/<int:listing_id>/comments/', CommentListCreateAPIView.as_view()),
+    path('listings/<int:listing_id>/rate/', RatingCreateAPIView.as_view()),
+    path('change-password/', ChangePasswordAPIView.as_view()),
 ]

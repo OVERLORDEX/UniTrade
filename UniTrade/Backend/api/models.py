@@ -16,6 +16,13 @@ class Profile(models.Model):
     dormitory = models.CharField(max_length=100, blank=True)
     room = models.CharField(max_length=20, blank=True)
     avatar_url = models.URLField(blank=True)
+    telegram = models.CharField(max_length=100, blank=True)
+    whatsapp = models.CharField(max_length=20, blank=True)
+    contact_email = models.EmailField(blank=True)
+    first_name = models.CharField(max_length=100, blank=True)
+    last_name = models.CharField(max_length=100, blank=True)
+    birth_year = models.PositiveIntegerField(blank=True, null=True)
+    avatar = models.ImageField(upload_to='profile_avatars/', blank=True, null=True)
 
     def __str__(self):
         return f"{self.user.username} Profile"
@@ -71,3 +78,14 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.user.username}: {self.text[:30]}"
+    
+class Rating(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ratings')
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='ratings')
+    score = models.PositiveSmallIntegerField()
+
+    class Meta:
+        unique_together = ('user', 'listing')
+
+    def __str__(self):
+        return f"{self.user.username} rated {self.listing.title}: {self.score}"

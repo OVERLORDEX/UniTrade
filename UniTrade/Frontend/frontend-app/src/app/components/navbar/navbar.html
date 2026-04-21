@@ -17,6 +17,7 @@
 
     <div class="nav-right">
       @if (authService.isAuthenticated()) {
+        <a routerLink="/profile" class="profile-link">Profile</a>
         <button class="logout-btn" (click)="logout()">Logout</button>
       } @else {
         <a routerLink="/login" class="login-link">Login</a>

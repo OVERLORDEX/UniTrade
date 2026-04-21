@@ -1,14 +1,14 @@
 <div class="detail-page">
   <div class="detail-container">
-    @if (isLoading) {
-      <div class="message-box loading-box">Loading listing...</div>
-    }
+    <div *ngIf="isLoading" class="message-box loading-box">
+      Loading listing...
+    </div>
 
-    @if (errorMessage && !listing) {
-      <div class="message-box error-box">{{ errorMessage }}</div>
-    }
+    <div *ngIf="!isLoading && errorMessage && !listing" class="message-box error-box">
+      {{ errorMessage }}
+    </div>
 
-    @if (!isLoading && listing) {
+    <div *ngIf="!isLoading && listing">
       <div class="detail-card">
         <div class="detail-image-block">
           <img [src]="getImageUrl(listing)" [alt]="listing.title" />
@@ -46,6 +46,47 @@
             <p>{{ listing.description }}</p>
           </div>
 
+          <div class="contact-box" *ngIf="listing.seller_profile">
+            <h3>Seller Contacts</h3>
+
+            <p *ngIf="listing.seller_profile.phone">
+              <strong>Phone:</strong> {{ listing.seller_profile.phone }}
+            </p>
+
+            <p *ngIf="listing.seller_profile.telegram">
+              <strong>Telegram:</strong> {{ listing.seller_profile.telegram }}
+            </p>
+
+            <p *ngIf="listing.seller_profile.whatsapp">
+              <strong>WhatsApp:</strong> {{ listing.seller_profile.whatsapp }}
+            </p>
+
+            <p *ngIf="listing.seller_profile.contact_email">
+              <strong>Email:</strong> {{ listing.seller_profile.contact_email }}
+            </p>
+
+            <p *ngIf="listing.seller_profile.dormitory || listing.seller_profile.room">
+              <strong>Dormitory:</strong>
+              {{ listing.seller_profile.dormitory }} {{ listing.seller_profile.room }}
+            </p>
+          </div>
+
+          <div class="rating-box">
+            <h3>Rating</h3>
+            <p>
+              Average: {{ listing.average_rating || 0 }} / 5
+              ({{ listing.ratings_count || 0 }} ratings)
+            </p>
+
+            <div class="stars">
+              <button type="button" (click)="rateListing(1)">1</button>
+              <button type="button" (click)="rateListing(2)">2</button>
+              <button type="button" (click)="rateListing(3)">3</button>
+              <button type="button" (click)="rateListing(4)">4</button>
+              <button type="button" (click)="rateListing(5)">5</button>
+            </div>
+          </div>
+
           <div class="detail-actions">
             <button class="favorite-btn" (click)="addToFavorites()">Add to Favorites</button>
             <a routerLink="/listings" class="back-btn">Back to Listings</a>
@@ -65,19 +106,15 @@
           <button (click)="addComment()">Post Comment</button>
         </div>
 
-        @if (comments.length === 0) {
-          <p class="no-comments">No comments yet.</p>
-        }
+        <p *ngIf="comments.length === 0" class="no-comments">No comments yet.</p>
 
         <div class="comments-list">
-          @for (comment of comments; track comment.id) {
-            <div class="comment-item">
-              <p class="comment-user">{{ comment.user.username }}</p>
-              <p class="comment-text">{{ comment.text }}</p>
-            </div>
-          }
+          <div *ngFor="let comment of comments" class="comment-item">
+            <p class="comment-user">{{ comment.user.username }}</p>
+            <p class="comment-text">{{ comment.text }}</p>
+          </div>
         </div>
       </div>
-    }
+    </div>
   </div>
 </div>

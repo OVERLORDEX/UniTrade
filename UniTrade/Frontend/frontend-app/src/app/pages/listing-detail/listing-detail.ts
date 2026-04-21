@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ListingService } from '../../services/listing';
@@ -7,7 +8,7 @@ import { Listing } from '../../models/listing';
 @Component({
   selector: 'app-listing-detail',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './listing-detail.html',
   styleUrl: './listing-detail.css'
 })
@@ -16,11 +17,13 @@ export class ListingDetailComponent implements OnInit {
   comments: any[] = [];
   commentText = '';
   errorMessage = '';
-  isLoading = false;
+  isLoading = true;
+  selectedRating = 0;
 
   constructor(
     private route: ActivatedRoute,
-    private listingService: ListingService
+    private listingService: ListingService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -38,11 +41,13 @@ export class ListingDetailComponent implements OnInit {
         console.log('DETAIL DATA:', data);
         this.listing = data;
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.log('DETAIL ERROR:', error);
         this.errorMessage = 'Failed to load listing';
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -50,7 +55,9 @@ export class ListingDetailComponent implements OnInit {
   loadComments(id: number): void {
     this.listingService.getComments(id).subscribe({
       next: (data) => {
-        this.comments = data;
+        console.log('COMMENTS DATA:', data);
+        this.comments = data || [];
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.log('COMMENTS ERROR:', error);
@@ -81,12 +88,26 @@ export class ListingDetailComponent implements OnInit {
       },
       error: () => {
         this.errorMessage = 'Failed to add comment';
+        this.cdr.detectChanges();
       }
     });
   }
 
+  rateListing(score: number): void {
+  if (!this.listing) return;
+
+  this.listingService.rateListing(this.listing.id, score).subscribe({
+    next: () => {
+      this.loadListing(this.listing!.id);
+    },
+    error: () => {
+      alert('You need to log in first');
+    }
+  });
+  }
+
   getImageUrl(listing: any): string {
-    if (listing && listing.image) {
+    if (listing?.image) {
       if (listing.image.startsWith('http')) {
         return listing.image;
       }

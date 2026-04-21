@@ -5,8 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-
-from .models import Category, Listing, Favorite, Comment
+from .models import Category, Listing, Favorite, Comment, Rating
 from .serializers import (
     RegisterSerializer,
     LoginSerializer,
@@ -15,8 +14,10 @@ from .serializers import (
     ProfileSerializer,
     FavoriteSerializer,
     CommentSerializer,
+    RatingSerializer,
 )
 from .permissions import IsOwnerOrReadOnly
+from .serializers import ChangePasswordSerializer
 
 
 # ---------------- FBV ----------------
@@ -229,4 +230,52 @@ class CommentListCreateAPIView(APIView):
         if serializer.is_valid():
             serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class RatingCreateAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, listing_id):
+        score = request.data.get('score')
+
+        if not score:
+            return Response({'error': 'Score is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            score = int(score)
+        except ValueError:
+            return Response({'error': 'Score must be a number.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if score < 1 or score > 5:
+            return Response({'error': 'Score must be between 1 and 5.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        rating, created = Rating.objects.update_or_create(
+            user=request.user,
+            listing_id=listing_id,
+            defaults={'score': score}
+        )
+
+        serializer = RatingSerializer(rating)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+class ChangePasswordAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = ChangePasswordSerializer(data=request.data)
+
+        if serializer.is_valid():
+            user = request.user
+
+            if not user.check_password(serializer.validated_data['old_password']):
+                return Response(
+                    {'error': 'Old password is incorrect.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            user.set_password(serializer.validated_data['new_password'])
+            user.save()
+
+            return Response({'message': 'Password changed successfully.'}, status=status.HTTP_200_OK)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

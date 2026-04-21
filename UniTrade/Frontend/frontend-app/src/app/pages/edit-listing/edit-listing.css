@@ -128,6 +128,13 @@
   grid-column: 1 / -1;
 }
 
+.input-label {
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
 .input-group input,
 .input-group textarea,
 .input-group select {
@@ -174,6 +181,12 @@
   max-height: 240px;
   border-radius: 14px;
   object-fit: cover;
+}
+
+.muted-text {
+  margin-top: 10px;
+  color: #6b7280;
+  font-size: 14px;
 }
 
 .edit-btn {
@@ -269,4 +282,23 @@
   .form-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.input-label {
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.muted-text {
+  margin-top: 10px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.section-title {
+  margin: 10px 0 4px;
+  font-size: 22px;
+  color: #111827;
 }

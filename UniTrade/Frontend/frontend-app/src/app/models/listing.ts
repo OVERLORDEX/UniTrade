@@ -10,6 +10,16 @@ export interface Listing {
   condition: string;
   status: string;
   seller: User;
+
+  seller_profile?: {
+    phone: string;
+    telegram: string;
+    whatsapp: string;
+    contact_email: string;
+    dormitory: string;
+    room: string;
+  };
+
   category: Category;
   category_id?: number;
   location: string;
@@ -18,4 +28,6 @@ export interface Listing {
   created_at: string;
   updated_at: string;
   favorites_count: number;
+  average_rating?: number;
+  ratings_count?: number;
 }

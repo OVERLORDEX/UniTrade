@@ -132,3 +132,17 @@
     justify-content: center;
   }
 }
+
+.profile-link {
+  text-decoration: none;
+  font-weight: 700;
+  padding: 10px 16px;
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.9);
+  transition: 0.2s;
+}
+
+.profile-link:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+}

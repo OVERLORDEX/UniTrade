@@ -8,47 +8,41 @@
   </div>
 
   <div class="page-container">
-    @if (errorMessage) {
-      <div class="message-box error-box">{{ errorMessage }}</div>
-    }
+    <div *ngIf="errorMessage" class="message-box error-box">
+      {{ errorMessage }}
+    </div>
 
-    @if (isLoading) {
-      <div class="message-box loading-box">Loading favorites...</div>
-    }
+    <div *ngIf="isLoading" class="message-box loading-box">
+      Loading favorites...
+    </div>
 
-    @if (!isLoading && favorites.length === 0) {
-      <div class="empty-state">
-        <h3>No favorites yet</h3>
-        <p>Save listings you like so you can find them later.</p>
-        <a routerLink="/listings" class="empty-btn">Browse Listings</a>
-      </div>
-    }
+    <div *ngIf="!isLoading && favorites.length === 0" class="empty-state">
+      <h3>No favorites yet</h3>
+      <p>Save listings you like so you can find them later.</p>
+      <a routerLink="/listings" class="empty-btn">Browse Listings</a>
+    </div>
 
-    @if (!isLoading && favorites.length > 0) {
-      <div class="favorites-grid">
-        @for (favorite of favorites; track favorite.id) {
-          <div class="favorite-card">
-            <div class="image-wrapper">
-              <img [src]="getImageUrl(favorite)" [alt]="favorite.listing.title" />
-              <span class="status-badge">{{ favorite.listing.status }}</span>
-            </div>
+    <div *ngIf="!isLoading && favorites.length > 0" class="favorites-grid">
+      <div *ngFor="let favorite of favorites" class="favorite-card">
+        <div class="image-wrapper">
+          <img [src]="getImageUrl(favorite)" [alt]="favorite.listing.title" />
+          <span class="status-badge">{{ favorite.listing.status }}</span>
+        </div>
 
-            <div class="card-body">
-              <h3>{{ favorite.listing.title }}</h3>
-              <p class="price">{{ favorite.listing.price }} ₸</p>
-              <p class="category">{{ favorite.listing.category.name }}</p>
-              <p class="location">{{ favorite.listing.location || 'Campus location not specified' }}</p>
+        <div class="card-body">
+          <h3>{{ favorite.listing.title }}</h3>
+          <p class="price">{{ favorite.listing.price }} ₸</p>
+          <p class="category">{{ favorite.listing.category.name }}</p>
+          <p class="location">{{ favorite.listing.location || 'Campus location not specified' }}</p>
 
-              <div class="card-actions">
-                <a [routerLink]="['/listings', favorite.listing.id]" class="view-btn">View</a>
-                <button class="remove-btn" (click)="removeFavorite(favorite.listing.id)">
-                  Remove
-                </button>
-              </div>
-            </div>
+          <div class="card-actions">
+            <a [routerLink]="['/listings', favorite.listing.id]" class="view-btn">View</a>
+            <button class="remove-btn" (click)="removeFavorite(favorite.listing.id)">
+              Remove
+            </button>
           </div>
-        }
+        </div>
       </div>
-    }
+    </div>
   </div>
 </div>

@@ -258,3 +258,16 @@
   border-radius: 14px;
   object-fit: cover;
 }
+
+.input-label {
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.section-title {
+  margin: 10px 0 4px;
+  font-size: 22px;
+  color: #111827;
+}

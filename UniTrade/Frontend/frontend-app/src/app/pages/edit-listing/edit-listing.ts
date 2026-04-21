@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ListingService } from '../../services/listing';
@@ -7,7 +8,7 @@ import { Category } from '../../models/category';
 @Component({
   selector: 'app-edit-listing',
   standalone: true,
-  imports: [FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './edit-listing.html',
   styleUrl: './edit-listing.css'
 })
@@ -19,7 +20,7 @@ export class EditListingComponent implements OnInit {
   price: number | null = null;
   condition = 'used';
   status = 'available';
-  category_id: number | null = null;
+  category_id = '';
   location = '';
 
   categories: Category[] = [];
@@ -34,55 +35,94 @@ export class EditListingComponent implements OnInit {
   categoryError = '';
   errorMessage = '';
   isLoading = false;
-  isPageLoading = false;
+  isPageLoading = true;
+
+  phone = '';
+  telegram = '';
+  whatsapp = '';
+  contact_email = '';
+  dormitory = '';
+  room = '';
 
   constructor(
     private route: ActivatedRoute,
     private listingService: ListingService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.id = Number(this.route.snapshot.paramMap.get('id'));
-    this.isPageLoading = true;
-
     this.loadCategories();
     this.loadListing();
+    this.loadProfile();
   }
 
   loadCategories(): void {
     this.listingService.getCategories().subscribe({
       next: (data) => {
-        this.categories = data;
+        console.log('EDIT CATEGORIES DATA:', data);
+        this.categories = data || [];
+        this.cdr.detectChanges();
       },
-      error: () => {
+      error: (error) => {
+        console.log('EDIT CATEGORIES ERROR:', error);
         this.errorMessage = 'Failed to load categories';
+        this.cdr.detectChanges();
       }
     });
   }
 
   loadListing(): void {
+    this.isPageLoading = true;
+    this.errorMessage = '';
+
     this.listingService.getListingById(this.id).subscribe({
       next: (listing: any) => {
-        this.title = listing.title;
-        this.description = listing.description;
-        this.price = listing.price;
-        this.condition = listing.condition;
-        this.status = listing.status;
-        this.category_id = listing.category?.id;
+        console.log('EDIT LISTING DATA:', listing);
+
+        this.title = listing.title || '';
+        this.description = listing.description || '';
+        this.price = listing.price ?? null;
+        this.condition = listing.condition || 'used';
+        this.status = listing.status || 'available';
+        this.category_id = String(listing.category?.id || '');
         this.location = listing.location || '';
 
         if (listing.image) {
           this.currentImageUrl = listing.image.startsWith('http')
             ? listing.image
             : `http://127.0.0.1:8000${listing.image}`;
+        } else {
+          this.currentImageUrl = null;
         }
 
         this.isPageLoading = false;
+        this.cdr.detectChanges();
       },
-      error: () => {
+      error: (error) => {
+        console.log('EDIT LISTING ERROR:', error);
         this.errorMessage = 'Failed to load listing';
         this.isPageLoading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  loadProfile(): void {
+    this.listingService.getProfile().subscribe({
+      next: (profile: any) => {
+        console.log('EDIT PROFILE DATA:', profile);
+        this.phone = profile.phone || '';
+        this.telegram = profile.telegram || '';
+        this.whatsapp = profile.whatsapp || '';
+        this.contact_email = profile.contact_email || '';
+        this.dormitory = profile.dormitory || '';
+        this.room = profile.room || '';
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.log('EDIT PROFILE LOAD ERROR:', error);
       }
     });
   }
@@ -96,6 +136,7 @@ export class EditListingComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = () => {
         this.imagePreview = reader.result as string;
+        this.cdr.detectChanges();
       };
       reader.readAsDataURL(this.selectedImage);
     }
@@ -157,13 +198,36 @@ export class EditListingComponent implements OnInit {
 
     this.isLoading = true;
 
+    const profileData = {
+      phone: this.phone,
+      telegram: this.telegram,
+      whatsapp: this.whatsapp,
+      contact_email: this.contact_email,
+      dormitory: this.dormitory,
+      room: this.room
+    };
+
+    this.listingService.updateProfile(profileData).subscribe({
+      next: () => {
+        this.updateListingRequest();
+      },
+      error: (error) => {
+        console.log('EDIT PROFILE UPDATE ERROR:', error);
+        this.errorMessage = 'Failed to save contact information';
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  updateListingRequest(): void {
     const formData = new FormData();
     formData.append('title', this.title.trim());
     formData.append('description', this.description.trim());
     formData.append('price', String(this.price));
     formData.append('condition', this.condition);
     formData.append('status', this.status);
-    formData.append('category_id', String(this.category_id));
+    formData.append('category_id', this.category_id);
     formData.append('location', this.location.trim());
     formData.append('is_active', 'true');
 
@@ -177,12 +241,16 @@ export class EditListingComponent implements OnInit {
         this.router.navigate(['/my-listings']);
       },
       error: (error) => {
+        console.log('EDIT UPDATE ERROR:', error);
         this.isLoading = false;
+
         if (error.error?.error) {
           this.errorMessage = error.error.error;
         } else {
           this.errorMessage = 'Failed to update listing';
         }
+
+        this.cdr.detectChanges();
       }
     });
   }

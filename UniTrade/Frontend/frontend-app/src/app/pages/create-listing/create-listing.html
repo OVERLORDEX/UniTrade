@@ -16,42 +16,40 @@
 
       <div class="form-grid">
         <div class="input-group full">
+          <label class="input-label">Title</label>
           <input
             type="text"
             placeholder="Title"
             [(ngModel)]="title"
             (blur)="validateTitle()"
           />
-          @if (titleError) {
-            <p class="field-error">{{ titleError }}</p>
-          }
+          <p *ngIf="titleError" class="field-error">{{ titleError }}</p>
         </div>
 
         <div class="input-group full">
+          <label class="input-label">Description</label>
           <textarea
             rows="5"
             placeholder="Description"
             [(ngModel)]="description"
             (blur)="validateDescription()"
           ></textarea>
-          @if (descriptionError) {
-            <p class="field-error">{{ descriptionError }}</p>
-          }
+          <p *ngIf="descriptionError" class="field-error">{{ descriptionError }}</p>
         </div>
 
         <div class="input-group">
+          <label class="input-label">Price</label>
           <input
             type="number"
             placeholder="Price"
             [(ngModel)]="price"
             (blur)="validatePrice()"
           />
-          @if (priceError) {
-            <p class="field-error">{{ priceError }}</p>
-          }
+          <p *ngIf="priceError" class="field-error">{{ priceError }}</p>
         </div>
 
         <div class="input-group">
+          <label class="input-label">Location</label>
           <input
             type="text"
             placeholder="Location (Dormitory / Campus)"
@@ -68,14 +66,13 @@
             (change)="onImageSelected($event)"
           />
 
-          @if (imagePreview) {
-            <div class="preview-box">
-              <img [src]="imagePreview" alt="Preview" />
-            </div>
-          }
+          <div *ngIf="imagePreview" class="preview-box">
+            <img [src]="imagePreview" alt="Preview" />
+          </div>
         </div>
 
         <div class="input-group">
+          <label class="input-label">Condition</label>
           <select [(ngModel)]="condition">
             <option value="new">New</option>
             <option value="used">Used</option>
@@ -83,6 +80,7 @@
         </div>
 
         <div class="input-group">
+          <label class="input-label">Status</label>
           <select [(ngModel)]="status">
             <option value="available">Available</option>
             <option value="reserved">Reserved</option>
@@ -91,29 +89,56 @@
         </div>
 
         <div class="input-group full">
+          <label class="input-label">Category</label>
           <select [(ngModel)]="category_id" (blur)="validateCategory()">
-            <option [ngValue]="null">Select category</option>
-            @for (category of categories; track category.id) {
-              <option [ngValue]="category.id">{{ category.name }}</option>
-            }
+            <option value="">Select category</option>
+            <option *ngFor="let category of categories" [value]="category.id">
+              {{ category.name }}
+            </option>
           </select>
-          @if (categoryError) {
-            <p class="field-error">{{ categoryError }}</p>
-          }
+          <p *ngIf="categoryError" class="field-error">{{ categoryError }}</p>
+        </div>
+
+        <div class="input-group full">
+          <h3 class="section-title">Contact Information</h3>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Phone</label>
+          <input type="text" placeholder="Phone number" [(ngModel)]="phone" />
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Telegram</label>
+          <input type="text" placeholder="@username" [(ngModel)]="telegram" />
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">WhatsApp</label>
+          <input type="text" placeholder="WhatsApp number" [(ngModel)]="whatsapp" />
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Email</label>
+          <input type="email" placeholder="Email" [(ngModel)]="contact_email" />
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Dormitory</label>
+          <input type="text" placeholder="Dormitory" [(ngModel)]="dormitory" />
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Room</label>
+          <input type="text" placeholder="Room" [(ngModel)]="room" />
         </div>
       </div>
 
       <button class="create-btn" (click)="onCreate()" [disabled]="isLoading">
-        @if (!isLoading) {
-          Publish listing
-        } @else {
-          Publishing...
-        }
+        {{ isLoading ? 'Publishing...' : 'Publish listing' }}
       </button>
 
-      @if (errorMessage) {
-        <p class="server-error">{{ errorMessage }}</p>
-      }
+      <p *ngIf="errorMessage" class="server-error">{{ errorMessage }}</p>
 
       <p class="back-link">
         Want to go back?

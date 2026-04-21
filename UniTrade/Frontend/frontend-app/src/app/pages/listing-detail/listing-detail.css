@@ -258,3 +258,23 @@
     flex-direction: column;
   }
 }
+
+.contact-box {
+  padding: 20px;
+  border-radius: 20px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 24px;
+}
+
+.contact-box h3 {
+  margin: 0 0 12px;
+  font-size: 22px;
+  color: #111827;
+}
+
+.contact-box p {
+  margin: 8px 0;
+  color: #374151;
+  line-height: 1.6;
+}

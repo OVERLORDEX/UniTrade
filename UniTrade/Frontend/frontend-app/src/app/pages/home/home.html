@@ -29,24 +29,25 @@
       </div>
     </div>
 
-    <div class="hero-right">
-      <div class="preview-card main-card">
-        <div class="preview-image"></div>
-        <div class="preview-content">
-          <h3>MacBook Air M1</h3>
-          <p>Electronics • Good condition</p>
-          <strong>320000 ₸</strong>
-        </div>
-      </div>
+   <div class="hero-right">
+  <div class="preview-card main-card">
+    <img class="preview-photo" [src]="currentItem.image" [alt]="currentItem.title" />
 
-      <div class="floating-card top-card">
-        <span>Books & Study Materials</span>
-      </div>
-
-      <div class="floating-card bottom-card">
-        <span>Furniture • Dorm Items • Services</span>
-      </div>
+    <div class="preview-content">
+      <h3>{{ currentItem.title }}</h3>
+      <p>{{ currentItem.category }} • {{ currentItem.condition }}</p>
+      <strong>{{ currentItem.price }}</strong>
     </div>
+  </div>
+
+  <div class="floating-card top-card">
+    <span>{{ previewItems[(currentIndex + 1) % previewItems.length].category }}</span>
+  </div>
+
+  <div class="floating-card bottom-card">
+    <span>{{ previewItems[(currentIndex + 2) % previewItems.length].category }}</span>
+  </div>
+</div>
   </section>
 
   <section class="features-section">
