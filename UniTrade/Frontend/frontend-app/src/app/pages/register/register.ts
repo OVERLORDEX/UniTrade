@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth';
@@ -23,7 +23,8 @@ export class RegisterComponent {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   validateUsername(): void {
@@ -83,6 +84,7 @@ export class RegisterComponent {
       next: (response) => {
         this.isLoading = false;
         this.authService.saveTokens(response.access, response.refresh);
+        this.cdr.detectChanges();
         this.router.navigate(['/listings']);
       },
       error: (error) => {
@@ -99,6 +101,7 @@ export class RegisterComponent {
         } else {
           this.errorMessage = 'Registration failed. Please check your data.';
         }
+        this.cdr.detectChanges();
       }
     });
   }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ListingService } from '../../services/listing';
@@ -34,16 +34,19 @@ export class CreateListingComponent implements OnInit {
 
   constructor(
     private listingService: ListingService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.listingService.getCategories().subscribe({
       next: (data) => {
         this.categories = data;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.errorMessage = 'Failed to load categories';
+        this.cdr.detectChanges();
       }
     });
   }
@@ -57,6 +60,7 @@ export class CreateListingComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = () => {
         this.imagePreview = reader.result as string;
+        this.cdr.detectChanges();
       };
       reader.readAsDataURL(this.selectedImage);
     }
@@ -135,6 +139,7 @@ export class CreateListingComponent implements OnInit {
     this.listingService.createListing(formData).subscribe({
       next: () => {
         this.isLoading = false;
+        this.cdr.detectChanges();
         this.router.navigate(['/my-listings']);
       },
       error: (error) => {
@@ -144,6 +149,7 @@ export class CreateListingComponent implements OnInit {
         } else {
           this.errorMessage = 'Failed to create listing';
         }
+        this.cdr.detectChanges();
       }
     });
   }
