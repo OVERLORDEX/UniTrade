@@ -1,7 +1,9 @@
 from django.db.models import Q
-from rest_framework.views import APIView
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status, permissions
+from rest_framework import status
+from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -19,63 +21,59 @@ from .serializers import (
 )
 
 
-class RegisterAPIView(APIView):
-    permission_classes = [permissions.AllowAny]
+# ---------------- FBV ----------------
 
-    def post(self, request):
-        serializer = RegisterSerializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            Profile.objects.get_or_create(user=user)
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def register_view(request):
+    serializer = RegisterSerializer(data=request.data)
+    if serializer.is_valid():
+        user = serializer.save()
+        Profile.objects.get_or_create(user=user)
 
-            refresh = RefreshToken.for_user(user)
-            return Response({
-                'message': 'User registered successfully.',
-                'access': str(refresh.access_token),
-                'refresh': str(refresh),
-            }, status=status.HTTP_201_CREATED)
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'message': 'User registered successfully.',
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+        }, status=status.HTTP_201_CREATED)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class LoginAPIView(APIView):
-    permission_classes = [permissions.AllowAny]
-
-    def post(self, request):
-        serializer = LoginSerializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.validated_data['user']
-            refresh = RefreshToken.for_user(user)
-            return Response({
-                'message': 'Login successful.',
-                'access': str(refresh.access_token),
-                'refresh': str(refresh),
-            }, status=status.HTTP_200_OK)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class LogoutAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def login_view(request):
+    serializer = LoginSerializer(data=request.data)
+    if serializer.is_valid():
+        user = serializer.validated_data['user']
+        refresh = RefreshToken.for_user(user)
 
-    def post(self, request):
-        try:
-            refresh_token = request.data.get("refresh")
-            token = RefreshToken(refresh_token)
-            token.blacklist()
-            return Response(
-                {'message': 'Logout successful.'},
-                status=status.HTTP_205_RESET_CONTENT
-            )
-        except Exception:
-            return Response(
-                {'error': 'Invalid refresh token.'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        return Response({
+            'message': 'Login successful.',
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+        }, status=status.HTTP_200_OK)
 
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def logout_view(request):
+    try:
+        refresh_token = request.data.get('refresh')
+        token = RefreshToken(refresh_token)
+        token.blacklist()
+        return Response({'message': 'Logout successful.'}, status=status.HTTP_205_RESET_CONTENT)
+    except Exception:
+        return Response({'error': 'Invalid refresh token.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# ---------------- CBV ----------------
 
 class CategoryListAPIView(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AllowAny]
 
     def get(self, request):
         categories = Category.objects.all()
@@ -84,7 +82,7 @@ class CategoryListAPIView(APIView):
 
 
 class ListingListAPIView(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AllowAny]
 
     def get(self, request):
         listings = Listing.objects.filter(is_active=True).select_related('seller', 'category')
@@ -113,7 +111,7 @@ class ListingListAPIView(APIView):
 
 
 class ListingDetailAPIView(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AllowAny]
 
     def get(self, request, pk):
         try:
@@ -129,7 +127,7 @@ class ListingDetailAPIView(APIView):
 
 
 class CreateListingAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
 
     def post(self, request):
@@ -144,7 +142,7 @@ class CreateListingAPIView(APIView):
 
 
 class EditListingAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
 
     def patch(self, request, pk):
@@ -154,10 +152,7 @@ class EditListingAPIView(APIView):
             return Response({'error': 'Listing not found.'}, status=status.HTTP_404_NOT_FOUND)
 
         if listing.seller != request.user:
-            return Response(
-                {'error': 'You can edit only your own listing.'},
-                status=status.HTTP_403_FORBIDDEN
-            )
+            return Response({'error': 'You can edit only your own listing.'}, status=status.HTTP_403_FORBIDDEN)
 
         serializer = ListingSerializer(
             listing,
@@ -165,6 +160,7 @@ class EditListingAPIView(APIView):
             partial=True,
             context={'request': request}
         )
+
         if serializer.is_valid():
             listing = serializer.save()
             return Response(ListingSerializer(listing, context={'request': request}).data)
@@ -173,7 +169,7 @@ class EditListingAPIView(APIView):
 
 
 class DeleteListingAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def delete(self, request, pk):
         try:
@@ -182,17 +178,14 @@ class DeleteListingAPIView(APIView):
             return Response({'error': 'Listing not found.'}, status=status.HTTP_404_NOT_FOUND)
 
         if listing.seller != request.user:
-            return Response(
-                {'error': 'You can delete only your own listing.'},
-                status=status.HTTP_403_FORBIDDEN
-            )
+            return Response({'error': 'You can delete only your own listing.'}, status=status.HTTP_403_FORBIDDEN)
 
         listing.delete()
         return Response({'message': 'Listing deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
 
 
 class MyListingsAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         listings = Listing.objects.filter(seller=request.user).order_by('-created_at')
@@ -201,18 +194,19 @@ class MyListingsAPIView(APIView):
 
 
 class FavoriteListAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         favorites = Favorite.objects.filter(user=request.user).select_related(
             'listing', 'listing__seller', 'listing__category'
         ).order_by('-created_at')
+
         serializer = FavoriteSerializer(favorites, many=True, context={'request': request})
         return Response(serializer.data)
 
 
 class AddFavoriteAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         listing_id = request.data.get('listing_id')
@@ -231,14 +225,11 @@ class AddFavoriteAPIView(APIView):
         )
 
         serializer = FavoriteSerializer(favorite, context={'request': request})
-        return Response(
-            serializer.data,
-            status=status.HTTP_201_CREATED if created else status.HTTP_200_OK
-        )
+        return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
 
 
 class RemoveFavoriteAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def delete(self, request):
         listing_id = request.data.get('listing_id')
@@ -256,7 +247,7 @@ class RemoveFavoriteAPIView(APIView):
 
 
 class CommentListAPIView(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AllowAny]
 
     def get(self, request, pk):
         comments = Comment.objects.filter(listing_id=pk).select_related('user').order_by('-created_at')
@@ -265,7 +256,7 @@ class CommentListAPIView(APIView):
 
 
 class AddCommentAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, pk):
         text = request.data.get('text', '').strip()
@@ -283,12 +274,13 @@ class AddCommentAPIView(APIView):
             listing=listing,
             text=text
         )
+
         serializer = CommentSerializer(comment)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class AddRatingAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         listing_id = request.data.get('listing_id')
@@ -320,14 +312,11 @@ class AddRatingAPIView(APIView):
         )
 
         serializer = RatingSerializer(rating)
-        return Response(
-            serializer.data,
-            status=status.HTTP_201_CREATED if created else status.HTTP_200_OK
-        )
+        return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
 
 
 class ProfileMeAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         profile, created = Profile.objects.get_or_create(user=request.user)
@@ -337,14 +326,16 @@ class ProfileMeAPIView(APIView):
     def patch(self, request):
         profile, created = Profile.objects.get_or_create(user=request.user)
         serializer = ProfileSerializer(profile, data=request.data, partial=True)
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ChangePasswordAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         serializer = ChangePasswordSerializer(data=request.data)
