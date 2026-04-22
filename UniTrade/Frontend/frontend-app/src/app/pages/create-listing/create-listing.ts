@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -44,7 +44,8 @@ export class CreateListingComponent implements OnInit {
   constructor(
     private listingService: ListingService,
     private router: Router,
-    public langService: LanguageService
+    public langService: LanguageService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -56,9 +57,11 @@ export class CreateListingComponent implements OnInit {
     this.listingService.getCategories().subscribe({
       next: (data) => {
         this.categories = data || [];
+        this.cdr.detectChanges();
       },
       error: () => {
         this.errorMessage = this.langService.t('failedToLoadCategories');
+        this.cdr.detectChanges();
       }
     });
   }
@@ -72,6 +75,7 @@ export class CreateListingComponent implements OnInit {
         this.contact_email = profile.contact_email || '';
         this.dormitory = profile.dormitory || '';
         this.room = profile.room || '';
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.log('PROFILE LOAD ERROR:', error);
@@ -88,6 +92,7 @@ export class CreateListingComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = () => {
         this.imagePreview = reader.result as string;
+        this.cdr.detectChanges();
       };
       reader.readAsDataURL(this.selectedImage);
     }
@@ -166,6 +171,7 @@ export class CreateListingComponent implements OnInit {
         console.log('PROFILE UPDATE ERROR:', error);
         this.errorMessage = this.langService.t('failedToSaveContactInformation');
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -188,6 +194,7 @@ export class CreateListingComponent implements OnInit {
     this.listingService.createListing(formData).subscribe({
       next: () => {
         this.isLoading = false;
+        this.cdr.detectChanges();
         this.router.navigate(['/my-listings']);
       },
       error: (error) => {
@@ -198,6 +205,7 @@ export class CreateListingComponent implements OnInit {
         } else {
           this.errorMessage = this.langService.t('failedToCreateListing');
         }
+        this.cdr.detectChanges();
       }
     });
   }
